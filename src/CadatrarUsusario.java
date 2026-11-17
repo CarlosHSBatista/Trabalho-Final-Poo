@@ -1,4 +1,6 @@
 import java.util.Scanner;
+//biblioteca do EmailValidator
+import org.apache.commons.validator.routines.EmailValidator;
 
 public class CadatrarUsusario {
 
@@ -6,8 +8,6 @@ public class CadatrarUsusario {
         //Aqui to pedindo as informações tirando os espaços do começo e do final
         System.out.print("Qual seu nome? ");
         String nomeUsuario = ler.nextLine().trim();
-
-        ler.nextLine();
 
         System.out.print("Digite sua senha: ");
         String senhaUsuario = ler.nextLine().trim();
@@ -21,11 +21,19 @@ public class CadatrarUsusario {
             confirmacaoSenha = ler.nextLine().trim();
         }
 
-        System.out.print("Digite seu email:");
+        System.out.print("Digite seu email: ");
         String email = ler.nextLine().trim();
 
-        while (!email.contains("@")){
+        //Aqui a variavel do tipo EmailValidator esta guardando o objeto validator
+        EmailValidator validador = EmailValidator.getInstance();
 
+        //Aqui ele recebe o email pelo metodo isValid e devolve um tru ou falce e o While ja trata o erro
+        while (!validador.isValid(email)){
+            System.out.print("O email está invalido digite novamente: ");
+            email = ler.nextLine().trim();
         }
+
+        System.out.println("Conta criada com susseso!");
     }
 }
+

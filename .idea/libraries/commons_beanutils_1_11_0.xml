@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="commons-beanutils-1.11.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/commons-beanutils-1.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-collections-3.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-digester-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-logging-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-validator-1.11.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
