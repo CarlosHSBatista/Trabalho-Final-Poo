@@ -1,44 +1,31 @@
 import java.util.Scanner;
 
 void main() {
-    System.out.println("Escolha as opções abaixo:");
-    System.out.println("1 - Cadastrar");
-    System.out.println("2 - Logar");
-    System.out.println("3 - Sair");
-
+    //Cria o Scanner para ser distribuidos nas classes que utiliza o Scanner
     Scanner ler = new Scanner(System.in);
-    System.out.print("Escolha: ");
-    int escolha = ler.nextInt();
 
+    //Declarando a classe MenuLogin
+    MenuLogin menuLogin = new MenuLogin();
 
-    switch (escolha){
-        case 1:
-            System.out.print("Qual seu nome? ");
-            String nomeUsuario = ler.nextLine().trim();
+    //Aqui eu to crinado uma String com o valor null
+    String escolha = null;
 
-            ler.nextLine();
+    do{
+        //Aqui eu chamo meu metodo da classe MenuLogin e quardo o resultado na String escolha
+        escolha = menuLogin.mostrarMenu(ler);
 
-            System.out.print("Digite sua senha: ");
-            String senhaUsuario = ler.nextLine().trim();
+        switch (escolha) {
+            case "1":
+                //To declarando a classe CadatrarUsuario
+                CadatrarUsusario cadastro = new CadatrarUsusario();
+                //Estou chamando o metodo que esta na classe CadatrarUsusario
+                cadastro.mostrarCadastrar(ler);
+                break;
+            case "2":
 
-
-            System.out.print("Confirme sua senha: ");
-            String confirmacaoSenha = ler.nextLine().trim();
-
-            while (!senhaUsuario.equals(confirmacaoSenha)){
-                System.out.println("Senha diferente digite novamente: ");
-                confirmacaoSenha = ler.nextLine().trim();
-            }
-
-            System.out.print("Digite seu email:");
-            String email = ler.nextLine().trim();
-
-            while (!email.contains("@")){
-
-            }
-        case 2:
-
-        case 3:
-            break;
-    }
+            case "0":
+                break;
+        }
+    //Minha condição de parada
+    }while (!escolha.equals("0"));
 }
