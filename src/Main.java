@@ -7,17 +7,35 @@ void main() {
     System.out.println("3 - Sair");
 
     Scanner ler = new Scanner(System.in);
-    System.out.println("Escolha: ");
+    System.out.print("Escolha: ");
     int escolha = ler.nextInt();
 
 
     switch (escolha){
         case 1:
-            System.out.println("Qual seu nome? ");
+            System.out.print("Qual seu nome? ");
             String nomeUsuario = ler.nextLine().trim();
 
-            System.out.println("Digite sua senha: ");
-            String senhaUsuario =
+            ler.nextLine();
+
+            System.out.print("Digite sua senha: ");
+            String senhaUsuario = ler.nextLine().trim();
+
+
+            System.out.print("Confirme sua senha: ");
+            String confirmacaoSenha = ler.nextLine().trim();
+
+            while (!senhaUsuario.equals(confirmacaoSenha)){
+                System.out.println("Senha diferente digite novamente: ");
+                confirmacaoSenha = ler.nextLine().trim();
+            }
+
+            System.out.print("Digite seu email:");
+            String email = ler.nextLine().trim();
+
+            while (!email.contains("@")){
+
+            }
         case 2:
 
         case 3:
