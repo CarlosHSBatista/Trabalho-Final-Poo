@@ -3,6 +3,9 @@ import java.util.Scanner;
 import static java.lang.Thread.sleep;
 
 void main() {
+    // Cria o texto que vai aparecer na janela
+    MenuLogin menuLogin = new MenuLogin();
+
     //Cria o Scanner para ser distribuidos nas classes que utiliza o Scanner
     Scanner ler = new Scanner(System.in);
 
