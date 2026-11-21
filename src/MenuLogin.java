@@ -4,6 +4,7 @@ public class MenuLogin {
 
     public String mostrarMenu(Scanner ler){
         //Menu de escolhas
+        System.out.println("        --Menu--");
         System.out.println("Escolha as opções abaixo:");
         System.out.println("1 - Cadastrar");
         System.out.println("2 - Logar");

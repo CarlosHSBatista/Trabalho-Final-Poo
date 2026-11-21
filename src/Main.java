@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-import static java.lang.Thread.sleep;
+
 
 void main() {
     //Cria o Scanner para ser distribuidos nas classes que utiliza o Scanner
@@ -12,6 +12,8 @@ void main() {
     //Aqui eu to crinado uma String com o valor null
     String escolha = null;
 
+     ArrayList<Usuario> usuarios = new ArrayList<>();
+
     do{
         //Aqui eu chamo meu metodo da classe MenuLogin e quardo o resultado na String escolha
         escolha = menuLogin.mostrarMenu(ler);
@@ -21,14 +23,18 @@ void main() {
         switch (escolha) {
             case "1":
                 //To declarando a classe CadatrarUsuario
-                CadatrarUsusario cadastro = new CadatrarUsusario();
+                CadatrarUsusario cadastro = new CadatrarUsusario(usuarios);
                 //Estou chamando o metodo que esta na classe CadatrarUsusario
                 cadastro.mostrarCadastrar(ler);
                 Utilitarios.tempo();
                 Utilitarios.limpar();
                 break;
             case "2":
-
+                Login logar = new Login(usuarios);
+                logar.fazerLogin(ler);
+                Utilitarios.tempo();
+                Utilitarios.limpar();
+                break;
             case "0":
                 break;
         }
