@@ -12,7 +12,8 @@ void main() {
     //Aqui eu to crinado uma String com o valor null
     String escolha = null;
 
-     ArrayList<Usuario> usuarios = new ArrayList<>();
+    //Aqui eu inicio a minha lista vazia
+    ArrayList<Usuario> usuarios = new ArrayList<>();
 
     do{
         //Aqui eu chamo meu metodo da classe MenuLogin e quardo o resultado na String escolha
@@ -24,13 +25,17 @@ void main() {
             case "1":
                 //To declarando a classe CadatrarUsuario
                 CadatrarUsusario cadastro = new CadatrarUsusario(usuarios);
+
                 //Estou chamando o metodo que esta na classe CadatrarUsusario
                 cadastro.mostrarCadastrar(ler);
                 Utilitarios.tempo();
                 Utilitarios.limpar();
                 break;
             case "2":
+                //Aqui eu declaro a classe login passando como parametro a minha lista para que ela poder acessar a lista
                 Login logar = new Login(usuarios);
+
+                //Aqui eu chamo meu metodo que esta na classe Login
                 logar.fazerLogin(ler);
                 Utilitarios.tempo();
                 Utilitarios.limpar();
@@ -38,6 +43,6 @@ void main() {
             case "0":
                 break;
         }
-    //Minha condição de parada
+    //Minha condição de parada enquanto for diferente de 0
     }while (!escolha.equals("0"));
 }

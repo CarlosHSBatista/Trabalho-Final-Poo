@@ -2,8 +2,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CadatrarUsusario {
+    //Aqui eu estou declarando a minha lista a minha variavel usuarios e do tipo list<Usuario>
     private List<Usuario> usuarios;
 
+    //Aqui eu estou guardando a referencia da minha lista na variavel usuarios que esta aqui dentro mas ela continua sendo a mesma lista
     CadatrarUsusario(List<Usuario> usuarios){
         this.usuarios = usuarios;
     }
@@ -34,11 +36,12 @@ public class CadatrarUsusario {
         //Aqui e o construtor da classe usuario
         Usuario pessoa = new Usuario();
 
-        //Aqui estou guardando as informações do usuario
+        //Aqui estou guardando as informações do usuario na variavel pessoa
         pessoa.setNomeUsuario(nomeCadastro);
         pessoa.setSenhaUsuario(senhaCadastro);
         pessoa.setEmailUsuario(emailCadastro);
 
+        //Aqui eu estou pegando oque eu coloquei em pessoa e jogando na lista usuarios
         usuarios.add(pessoa);
 
 
