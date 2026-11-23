@@ -1,5 +1,7 @@
 package com.loja.model;
 
+// Produto normal é a folha do Composite
+// Tem preço e estoque próprio
 public class ProdutoSimples extends Produto{
 
     private double preco;
@@ -12,7 +14,7 @@ public class ProdutoSimples extends Produto{
         this.estoque = estoque;
     }
 
-    //metodos abstratos que irá ser usado para calcular o preco e mexer no estoque
+    //Metodos abstratos que irá ser usado para calcular o preco e mexer no estoque
     @Override
     public double calcularPreco() {
         return preco;

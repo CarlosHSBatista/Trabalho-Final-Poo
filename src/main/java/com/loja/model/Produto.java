@@ -1,5 +1,7 @@
 package com.loja.model;
 
+// Classe mãe de todos os produtos
+// No Composite ela é o componente e na Factory é o que a fábrica devolve
 public abstract class Produto {
     protected int id;
     protected String nome;
@@ -12,7 +14,7 @@ public abstract class Produto {
         this.descricao = descricao;
     }
 
-    //metodos abstratos que irá ser usado para calcular o preco e mexer no estoque
+    //Metodos abstratos que irá ser usado para calcular o preco e mexer no estoque
     public abstract double calcularPreco();
 
     public abstract boolean verificarEstoque(int quantidade);

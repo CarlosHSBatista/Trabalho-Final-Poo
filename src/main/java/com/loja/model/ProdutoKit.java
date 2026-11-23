@@ -3,6 +3,8 @@ package com.loja.model;
 import java.util.ArrayList;
 import java.util.List;
 
+// Kit de produtos é o composto do Composite
+// Ele não tem preço nem estoque próprio, pega dos produtos que estão dentro
 public class ProdutoKit extends Produto {
 
     //Cria uma Lista pra guardar os produtos
