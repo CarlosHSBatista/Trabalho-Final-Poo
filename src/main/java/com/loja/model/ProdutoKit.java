@@ -34,16 +34,20 @@ public class ProdutoKit extends Produto {
     }
 
     @Override
+    // Verifica se TODOS os produtos do kit têm estoque suficiente
     public boolean verificarEstoque(int quantidade) {
+        // Se algum produto não tiver estoque, o kit inteiro fica indisponível
         for (Produto p : produtos) {
             if (!p.verificarEstoque(quantidade)) {
                 return false;
             }
         }
+        // Todos os produtos têm estoque
         return true;
     }
 
     @Override
+    // Diminui o estoque de cada produto do kit, só se todos tiverem estoque
     public void diminuirEstoque(int quantidade) {
         if (verificarEstoque(quantidade)) {
             for (Produto p : produtos) {
