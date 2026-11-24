@@ -25,6 +25,10 @@ public class ProdutoKit extends Produto {
         produtos.remove(produto);
     }
 
+    public List<Produto> getComponentes() {
+        return List.copyOf(produtos);
+    }
+
     @Override
     public double calcularPreco() {
         //Faz a soma dos itens que  estão dentro da Sacola

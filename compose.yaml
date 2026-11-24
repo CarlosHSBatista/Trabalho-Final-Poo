@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: loja
+      POSTGRES_USER: loja
+      POSTGRES_PASSWORD: ${LOJA_DB_PASSWORD:-loja_dev}
+    ports:
+      - "127.0.0.1:${LOJA_DB_PORT:-55432}:5432"
+    volumes:
+      - loja_dados:/var/lib/postgresql/data
+      - ./db/01-catalogo.sql:/docker-entrypoint-initdb.d/01-catalogo.sql:ro
+      - ./db/02-compras.sql:/docker-entrypoint-initdb.d/02-compras.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U loja -d loja"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  loja_dados:
