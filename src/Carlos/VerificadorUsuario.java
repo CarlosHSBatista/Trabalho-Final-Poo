@@ -1,3 +1,5 @@
+package Carlos;
+
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.util.List;
@@ -59,7 +61,7 @@ public class VerificadorUsuario {
         //Aqui a variavel usuario do tipo Usuario assume oque esta dentro da lista pelo usuarios e a cada repeticao vai seguindo a proximo da lista
         for(Usuario usuario : usuarios){
             //Aqui ele pega o email digitado e confere se e igual ao email do usuario
-            if(email.equalsIgnoreCase(usuario.getEmailUsuario())){
+            if(email.equals(usuario.getEmailUsuario())){
                 return true;
             }
         }

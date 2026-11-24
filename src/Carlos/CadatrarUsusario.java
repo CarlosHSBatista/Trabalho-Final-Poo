@@ -1,3 +1,5 @@
+package Carlos;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -6,7 +8,7 @@ public class CadatrarUsusario {
     private List<Usuario> usuarios;
 
     //Aqui eu estou guardando a referencia da minha lista na variavel usuarios que esta aqui dentro mas ela continua sendo a mesma lista
-    CadatrarUsusario(List<Usuario> usuarios){
+    public CadatrarUsusario(List<Usuario> usuarios){
         this.usuarios = usuarios;
     }
 

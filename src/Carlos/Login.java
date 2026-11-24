@@ -1,3 +1,4 @@
+package Carlos;
 
 import java.util.List;
 import java.util.Scanner;
@@ -7,7 +8,7 @@ public class Login {
     private List<Usuario> usuarios;
 
     //Aqui eu guardo a referencia da minha lista na minha variavel usuarios e minha lista nao muda continua sendo a mesma coisa aqui dentro
-    Login(List<Usuario> usuarios){
+    public Login(List<Usuario> usuarios){
         this.usuarios = usuarios;
     }
 
