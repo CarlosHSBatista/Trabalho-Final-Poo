@@ -4,6 +4,8 @@ Verificação em 24/11/2026, branch local `integration`. As classes citadas est�
 
 | Frente | Estado e evidência |
 |---|---|
+| Exibição do total com entrega | Verificada em 25/11 na janela JavaFX. O valor aparece em uma linha própria. No tamanho mínimo, conferi o total de R$ 398,79 e um valor longo sem corte. |
+| Vitrine UaiBoom | Verificada em 25/11 no JavaFX. Consultei o catálogo local pelo cabeçalho, usei o filtro Kits, naveguei até o cadastro e conferi os controles administrativos. No tamanho mínimo, o resumo do carrinho exibiu o total do frete expresso e manteve o botão de finalizar dentro da janela. Os cartões não usam imagens. |
 | Total do carrinho no JavaFX | Verificado em 24/11. O subtotal dos itens permanece visível e o total é recalculado ao trocar a modalidade. Na janela, R$ 129,80 resultou em R$ 136,29 no normal, R$ 142,78 no expresso e R$ 123,31 na retirada. Carrinho vazio exibiu R$ 0,00. |
 | Interface JavaFX | Verificada em 24/11 com PostgreSQL de teste em porta separada. Abri a janela e executei cadastro, login, busca, seleção de produto, carrinho, pedido, histórico e logout. Como administrador, cadastrei, editei e removi um produto e consultei todos os pedidos. O terminal continua disponível. |
 | Catálogo e Factory Method | Verificado pelo menu de administrador. Cadastrei produtos simples e kit, editei um produto, busquei e removi. `controle/Catalogo` e `model/CriadorProduto` delegam a criação conforme o tipo. |

@@ -15,6 +15,7 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.Task;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -56,11 +57,11 @@ public final class LojaApp extends Application {
     @Override
     public void start(Stage stage) {
         janela = stage;
-        Scene cena = new Scene(raiz, 1050, 680);
+        Scene cena = new Scene(raiz, 1180, 740);
         cena.getStylesheets().add(LojaApp.class.getResource("loja.css").toExternalForm());
         aviso.getStyleClass().add("notice");
         aviso.setWrapText(true);
-        stage.setTitle("Loja Tema 4");
+        stage.setTitle("UaiBoom");
         stage.setMinWidth(860);
         stage.setMinHeight(590);
         stage.setScene(cena);
@@ -73,26 +74,35 @@ public final class LojaApp extends Application {
         banco.shutdownNow();
     }
 
-    private void tela(String titulo, String descricao, String pagina) {
-        Label marca = rotulo("Loja Tema 4", "brand");
-        VBox menu = new VBox(marca, navegacao("Catálogo", pagina, this::catalogo));
-        menu.getStyleClass().add("sidebar");
-        menu.setPrefWidth(205);
+    private void tela(String titulo, String descricao, String pagina, TextField busca, Runnable buscar) {
+        Button marca = botao("UaiBoom", false, this::catalogo);
+        marca.getStyleClass().add("brand");
+        busca.setOnAction(evento -> buscar.run());
+        HBox faixaBusca = linha(busca, botao("Buscar", true, buscar));
+        faixaBusca.getStyleClass().add("search");
+        HBox.setHgrow(busca, Priority.ALWAYS);
+        HBox.setHgrow(faixaBusca, Priority.ALWAYS);
+        HBox topo = linha(marca, faixaBusca);
+        topo.getStyleClass().add("masthead");
+        HBox menu = linha(navegacao("Catálogo", pagina, this::catalogo));
+        menu.getStyleClass().add("navigation");
         Region espaco = new Region();
-        VBox.setVgrow(espaco, Priority.ALWAYS);
+        HBox.setHgrow(espaco, Priority.ALWAYS);
         if (sessao == null) {
-            menu.getChildren().addAll(espaco, navegacao("Entrar", pagina, () -> conta(false)));
+            topo.getChildren().add(botao("Entrar", false, () -> conta(false)));
         } else {
             menu.getChildren().addAll(navegacao("Meu carrinho", pagina, this::carrinho),
                     navegacao("Meus pedidos", pagina, () -> pedidos(false)));
             if (sessao.admin()) {
                 menu.getChildren().add(navegacao("Todos os pedidos", pagina, () -> pedidos(true)));
             }
-            menu.getChildren().addAll(espaco, rotulo(sessao.nome(), "account"),
-                    navegacao("Sair da conta", pagina, () -> {
-                        sessao = null;
-                        catalogo();
-                    }));
+            Label conta = rotulo(sessao.nome(), "account");
+            conta.setMaxWidth(140);
+            topo.getChildren().add(conta);
+            menu.getChildren().addAll(espaco, navegacao("Sair da conta", pagina, () -> {
+                sessao = null;
+                catalogo();
+            }));
         }
         if (aviso.getParent() instanceof VBox anterior) {
             anterior.getChildren().remove(aviso);
@@ -103,41 +113,125 @@ public final class LojaApp extends Application {
         painel.setStyle("-fx-padding: 0 0 16 0;");
         aviso.setStyle("-fx-padding: 0 32 0 32;");
         VBox.setVgrow(corpo, Priority.ALWAYS);
-        raiz.setLeft(menu);
+        raiz.setTop(new VBox(topo, menu));
         raiz.setCenter(painel);
         informar("", false);
     }
 
+    private void tela(String titulo, String descricao, String pagina) {
+        TextField busca = campo("Buscar produtos e kits");
+        tela(titulo, descricao, pagina, busca, () -> catalogo(busca.getText()));
+    }
+
     private void catalogo() {
-        tela("Catálogo", "Encontre produtos avulsos e kits pelo nome.", "Catálogo");
-        TextField busca = campo("Buscar produto");
-        HBox.setHgrow(busca, Priority.ALWAYS);
-        TableView<Produto> tabela = tabela("Nenhum produto encontrado.");
-        coluna(tabela, "ID", 65, p -> "#" + p.getId());
-        coluna(tabela, "Produto", 185, Produto::getNome);
-        coluna(tabela, "Tipo", 85, p -> p instanceof ProdutoKit ? "Kit" : "Avulso");
-        coluna(tabela, "Descrição", 180, Produto::getDescricao);
-        coluna(tabela, "Preço", 100, p -> moeda.format(p.calcularPreco()));
-        Consumer<String> pesquisar = termo -> executar(() -> catalogo.buscar(termo),
-                itens -> tabela.getItems().setAll(itens));
-        busca.setOnAction(evento -> pesquisar.accept(busca.getText()));
-        HBox filtros = linha(busca, botao("Buscar", true, () -> pesquisar.accept(busca.getText())));
-        HBox acoes = linha(botao(sessao == null ? "Entrar para comprar" : "Definir quantidade no carrinho",
-                true, () -> {
-                    if (sessao == null) {
-                        conta(false);
-                    } else {
-                        selecionar(tabela, produto -> definirQuantidade(produto, "1",
-                                "Carrinho atualizado.", () -> {}));
-                    }
-                }));
+        catalogo("");
+    }
+
+    private void catalogo(String termoInicial) {
+        TextField busca = campo("Buscar produtos e kits");
+        busca.setText(termoInicial);
+        ComboBox<String> ordenar = new ComboBox<>();
+        ordenar.getItems().setAll("Mais recentes", "Menor preço", "Maior preço");
+        ordenar.setValue("Mais recentes");
+        ordenar.setAccessibleText("Ordenar produtos");
+        TilePane grade = new TilePane(Orientation.HORIZONTAL);
+        grade.setHgap(16);
+        grade.setVgap(16);
+        grade.setPrefTileWidth(240);
+        grade.setTileAlignment(Pos.TOP_LEFT);
+        Label contagem = rotulo("", "subtitle");
+        Label vazio = rotulo("Nenhum produto encontrado.", "empty");
+        VBox resultados = new VBox(grade, vazio);
+        ScrollPane rolagem = new ScrollPane(resultados);
+        rolagem.getStyleClass().add("shelf");
+        rolagem.setFitToWidth(true);
+        rolagem.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        VBox.setVgrow(rolagem, Priority.ALWAYS);
+
+        var itens = javafx.collections.FXCollections.<Produto>observableArrayList();
+        Consumer<String> pesquisar = termo -> executar(() -> catalogo.buscar(termo), itens::setAll);
+        ToggleGroup filtros = new ToggleGroup();
+        ToggleButton todos = filtro("Todos", filtros);
+        ToggleButton avulsos = filtro("Avulsos", filtros);
+        ToggleButton kits = filtro("Kits", filtros);
+        filtros.selectToggle(todos);
+        Runnable atualizar = () -> {
+            var ordem = switch (ordenar.getValue()) {
+                case "Menor preço" -> java.util.Comparator.comparingDouble(Produto::calcularPreco);
+                case "Maior preço" -> java.util.Comparator.comparingDouble(Produto::calcularPreco).reversed();
+                default -> java.util.Comparator.comparingInt(Produto::getId).reversed();
+            };
+            var visiveis = itens.stream().filter(p -> filtros.getSelectedToggle() == avulsos
+                    ? !(p instanceof ProdutoKit) : filtros.getSelectedToggle() != kits || p instanceof ProdutoKit)
+                    .sorted(ordem).toList();
+            grade.getChildren().setAll(visiveis.stream().map(p -> cartaoProduto(p, pesquisar, busca)).toList());
+            contagem.setText(visiveis.size() == 1 ? "1 produto" : visiveis.size() + " produtos");
+            vazio.setVisible(visiveis.isEmpty());
+            vazio.setManaged(visiveis.isEmpty());
+        };
+        filtros.selectedToggleProperty().addListener((obs, anterior, atual) -> {
+            if (atual == null) {
+                filtros.selectToggle(todos);
+            } else {
+                atualizar.run();
+            }
+        });
+        ordenar.valueProperty().addListener((obs, anterior, atual) -> atualizar.run());
+        itens.addListener((javafx.collections.ListChangeListener<Produto>) mudanca -> atualizar.run());
+
+        tela("Catálogo", "Produtos avulsos e kits", "Catálogo", busca,
+                () -> pesquisar.accept(busca.getText()));
+        Region espaco = new Region();
+        HBox.setHgrow(espaco, Priority.ALWAYS);
+        HBox acoes = linha(todos, avulsos, kits, espaco, ordenar);
         if (sessao != null && sessao.admin()) {
-            acoes.getChildren().addAll(botao("Novo produto", false, () -> editar(null, pesquisar, busca)),
-                    botao("Editar", false, () -> selecionar(tabela, p -> editar(p, pesquisar, busca))),
-                    botao("Remover", false, () -> selecionar(tabela, p -> remover(p, pesquisar, busca))));
+            acoes.getChildren().add(botao("Novo produto", true, () -> editar(null, pesquisar, busca)));
         }
-        corpo.getChildren().addAll(filtros, tabela, acoes);
-        pesquisar.accept("");
+        corpo.getChildren().addAll(acoes, contagem, rolagem);
+        atualizar.run();
+        pesquisar.accept(termoInicial);
+    }
+
+    private VBox cartaoProduto(Produto produto, Consumer<String> pesquisar, TextField busca) {
+        Label tipo = rotulo(produto instanceof ProdutoKit ? "KIT" : "AVULSO", "product-type");
+        Label nome = rotulo(produto.getNome(), "product-name");
+        nome.setWrapText(true);
+        nome.setMaxHeight(58);
+        nome.setTooltip(new Tooltip(produto.getNome()));
+        Label descricao = rotulo(produto.getDescricao(), "subtitle");
+        descricao.setWrapText(true);
+        descricao.setMaxHeight(40);
+        if (!produto.getDescricao().isBlank()) {
+            descricao.setTooltip(new Tooltip(produto.getDescricao()));
+        }
+        Region espaco = new Region();
+        VBox.setVgrow(espaco, Priority.ALWAYS);
+        Button comprar = botao(sessao == null ? "Entrar para comprar" : "Comprar", true, () -> {
+            if (sessao == null) {
+                conta(false);
+            } else {
+                definirQuantidade(produto, "1", "Carrinho atualizado.", () -> {});
+            }
+        });
+        comprar.setAccessibleText(comprar.getText() + " " + produto.getNome());
+        comprar.setMaxWidth(Double.MAX_VALUE);
+        VBox cartao = new VBox(tipo, nome, descricao, espaco,
+                rotulo(moeda.format(produto.calcularPreco()), "product-price"), comprar);
+        cartao.getStyleClass().add("product-card");
+        cartao.setPrefSize(240, 216);
+        if (sessao != null && sessao.admin()) {
+            cartao.setPrefHeight(260);
+            cartao.getChildren().add(linha(botao("Editar", false, () -> editar(produto, pesquisar, busca)),
+                    botao("Remover", false, () -> remover(produto, pesquisar, busca))));
+        }
+        return cartao;
+    }
+
+    private static ToggleButton filtro(String nome, ToggleGroup grupo) {
+        ToggleButton botao = new ToggleButton(nome);
+        botao.setToggleGroup(grupo);
+        botao.getStyleClass().add("filter");
+        return botao;
     }
 
     private void conta(boolean cadastro) {
@@ -179,7 +273,11 @@ public final class LojaApp extends Application {
         enviar.setDefaultButton(true);
         formulario.getChildren().add(linha(enviar, botao(cadastro ? "Voltar para entrar" : "Criar uma conta",
                 false, () -> conta(!cadastro))));
-        corpo.getChildren().add(formulario);
+        ScrollPane rolagem = new ScrollPane(formulario);
+        rolagem.getStyleClass().add("shelf");
+        rolagem.setFitToWidth(true);
+        VBox.setVgrow(rolagem, Priority.ALWAYS);
+        corpo.getChildren().add(rolagem);
     }
 
     private void carrinho() {
@@ -195,6 +293,8 @@ public final class LojaApp extends Application {
         subtotal.textProperty().bind(Bindings.createStringBinding(
                 () -> "Subtotal dos itens   " + moeda.format(valorSubtotal.get()), valorSubtotal));
         Label totalPrevisto = rotulo("", "subtotal");
+        totalPrevisto.setWrapText(true);
+        VBox totalEntrega = new VBox(2, rotulo("Total com entrega", "subtitle"), totalPrevisto);
         ComboBox<Modalidade> modalidade = new ComboBox<>();
         modalidade.getItems().setAll(Modalidade.values());
         modalidade.setConverter(new StringConverter<>() {
@@ -206,7 +306,7 @@ public final class LojaApp extends Application {
         modalidade.setValue(Modalidade.NORMAL);
         modalidade.setAccessibleText("Modalidade de entrega");
         totalPrevisto.textProperty().bind(Bindings.createStringBinding(
-                () -> "Total com entrega   " + moeda.format(compras.preverTotal(
+                () -> moeda.format(compras.preverTotal(
                         valorSubtotal.get(), modalidade.getValue())), valorSubtotal, modalidade.valueProperty()));
         Button finalizar = botao("Finalizar pedido", true, () -> {
             Modalidade escolha = modalidade.getValue();
@@ -216,14 +316,25 @@ public final class LojaApp extends Application {
             });
         });
         finalizar.disableProperty().bind(Bindings.isEmpty(tabela.getItems()));
-        corpo.getChildren().addAll(tabela, linha(
+        VBox itens = new VBox(10, tabela, linha(
                 botao("Alterar quantidade", false, () -> selecionar(tabela, item ->
                         definirQuantidade(item.produto(), String.valueOf(item.quantidade()),
                                 "Quantidade atualizada.", this::carrinho))),
                 botao("Remover item", false, () -> selecionar(tabela, item ->
-                        salvarQuantidade(item.produto(), 0, "Item removido.", this::carrinho)))),
-                linha(new Label("Entrega"), modalidade), subtotal, linha(totalPrevisto, finalizar));
-        executar(() -> compras.carrinho(sessao), itens -> tabela.getItems().setAll(itens));
+                        salvarQuantidade(item.produto(), 0, "Item removido.", this::carrinho)))));
+        HBox.setHgrow(itens, Priority.ALWAYS);
+        modalidade.setMaxWidth(Double.MAX_VALUE);
+        finalizar.setMaxWidth(Double.MAX_VALUE);
+        VBox resumo = new VBox(rotulo("Resumo da compra", "product-name"), subtotal,
+                new Separator(), new Label("Entrega"), modalidade, totalEntrega, finalizar);
+        resumo.getStyleClass().add("card");
+        resumo.setPrefWidth(270);
+        resumo.setMinWidth(270);
+        HBox painel = new HBox(16, itens, resumo);
+        VBox.setVgrow(painel, Priority.ALWAYS);
+        resumo.setMaxHeight(Region.USE_PREF_SIZE);
+        corpo.getChildren().add(painel);
+        executar(() -> compras.carrinho(sessao), linhas -> tabela.getItems().setAll(linhas));
     }
 
     private void pedidos(boolean todos) {

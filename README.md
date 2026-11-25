@@ -1,4 +1,4 @@
-# Loja de Produtos Online — Tema 4
+# UaiBoom — Loja de Produtos Online
 
 Aplicação JavaFX para consultar o catálogo, comprar produtos avulsos ou kits e acompanhar pedidos. As contas, os carrinhos e os pedidos são gravados em PostgreSQL. O mesmo sistema também tem um menu de terminal.
 
@@ -45,7 +45,7 @@ mvn javafx:run
 ## 4. Faça uma compra de teste
 
 1. Na janela, clique em **Entrar → Criar uma conta**. Use um e-mail de teste e uma senha de pelo menos oito caracteres. Entre com essa conta.
-2. Em **Catálogo**, busque por `Kit`. Selecione **Kit escritório**, clique em **Definir quantidade no carrinho** e confirme `1`.
+2. Em **Catálogo**, busque por `Kit` no topo da janela ou use o filtro **Kits**. No cartão **Kit escritório**, clique em **Comprar** e confirme a quantidade `1`.
 3. Abra **Meu carrinho**. O subtotal esperado é **R$ 129,80**. Para testar a persistência do carrinho, feche a aplicação, abra de novo e entre com a mesma conta. O kit deve continuar lá.
 4. Selecione **Frete normal** e clique em **Finalizar pedido**. O total esperado é **R$ 136,29**. A aplicação abre **Meus pedidos**, onde aparecem o kit, a quantidade e o total. Em **Meu carrinho**, a lista deve estar vazia.
 5. Feche e abra a aplicação novamente. Entre com a mesma conta e confira o pedido em **Meus pedidos**. Crie uma segunda conta para confirmar que ela começa com carrinho e histórico próprios.
@@ -58,7 +58,7 @@ Crie uma conta separada com o e-mail `admin@example.com` pela própria loja. Em 
 docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U loja -d loja -c "UPDATE cliente SET admin = true WHERE email = 'admin@example.com';"
 ```
 
-O comando deve retornar `UPDATE 1`. Saia da conta e entre novamente. No **Catálogo**, use **Novo produto** para cadastrar um avulso de teste, busque pelo nome, selecione a linha, edite e remova. Para criar um kit, marque **Kit de produtos** e informe os IDs de produtos existentes. **Todos os pedidos** mostra as compras registradas.
+O comando deve retornar `UPDATE 1`. Saia da conta e entre novamente. No **Catálogo**, use **Novo produto** para cadastrar um avulso de teste e busque pelo nome. Use **Editar** e **Remover** no cartão do produto. Para criar um kit, marque **Kit de produtos** e informe os IDs de produtos existentes. **Todos os pedidos** mostra as compras registradas.
 
 ## Menu de terminal
 
